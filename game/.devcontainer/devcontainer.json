@@ -1,0 +1,20 @@
+{
+    "name": "Game Module",
+    "dockerComposeFile": [
+        "../docker-compose.yml"
+    ],
+    "service": "game",
+    "workspaceFolder": "/workspace/game",
+    "workspaceMount": "source=${localWorkspaceFolder}/game,target=/workspace/game,type=bind",
+    "runArgs": [
+        "--gpus",
+        "all"
+    ],
+    "extensions": [
+        "ms-python.python",
+        "ms-vscode.cpptools"
+    ],
+    "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+    }
+}
