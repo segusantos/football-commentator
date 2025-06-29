@@ -1,6 +1,0 @@
-# Requirements for communicating microservices:
-# - game: agent actions -> match events
-# - commentary: match events -> commments
-# - tts: comments -> speech
-grpcio
-grpcio-tools
