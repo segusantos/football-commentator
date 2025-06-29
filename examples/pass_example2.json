@@ -1,0 +1,26 @@
+{
+    "type": "pass",
+    "subtype": "short_pass",
+    "timestamp": 97005.693487786,
+    "time_interval": 1.2128760409977986,
+    "team_in_possession": "France",
+    "player1": {
+        "first_name": "Antoine",
+        "last_name": "Griezmann",
+        "nickname": "Grizi",
+        "number": 7,
+        "short_position": "CM",
+        "position": "Central Midfielder"
+    },
+    "player2": {
+        "first_name": "Enzo",
+        "last_name": "Fernandez",
+        "nickname": "Enzo",
+        "number": 24,
+        "short_position": "CM",
+        "position": "Central Midfielder"
+    },
+    "pass_completed": false,
+    "location_origin": "middle third, center",
+    "location_destination": "middle third, center"
+}

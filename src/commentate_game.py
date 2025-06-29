@@ -3,6 +3,7 @@ from gfootball.env.football_action_set import action_set_v1 as default_action_se
 
 from football_commentator_env import FootballCommentatorEnv
 from event_extractor import EventExtractor
+from pass_extractor import PassExtractor
 
 
 def run_game(left_player: str, right_player: str) -> None:
@@ -17,7 +18,7 @@ def run_game(left_player: str, right_player: str) -> None:
     }))
     env.render()
     obs = env.reset()
-    event_extractor = EventExtractor()
+    event_extractor = PassExtractor()
     while True:
         obs, actions, done = env.step([])
         left_action = str(actions[0]) if actions[0] in default_action_set else "idle"
