@@ -71,8 +71,8 @@ class GameConfig {
   std::string data_dir;
   // How many physics animation steps are done per single environment step.
   int physics_steps_per_frame = 10;
-  int render_resolution_x = 1280;
-  int render_resolution_y = 720;
+  int render_resolution_x = 1920;
+  int render_resolution_y = 1080;
   std::string updatePath(const std::string& path) {
 #ifdef WIN32
     boost::filesystem::path boost_path(path);

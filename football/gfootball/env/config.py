@@ -92,7 +92,7 @@ class Config(object):
         'players': ['agent:left_players=1'],
         'level': '11_vs_11_stochastic',
         'physics_steps_per_frame': 10,
-        'render_resolution_x': 1280,
+        'render_resolution_x': 1920,
         'real_time': False,
         'tracesdir': os.path.join(tempfile.gettempdir(), 'dumps'),
         'video_format': 'avi',

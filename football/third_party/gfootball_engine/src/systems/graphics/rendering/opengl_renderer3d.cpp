@@ -396,8 +396,9 @@ void OpenGLRenderer3D::CreateContextSdl() {
 #endif
 
   window = SDL_CreateWindow("Google Research Football", SDL_WINDOWPOS_UNDEFINED,
-                            SDL_WINDOWPOS_UNDEFINED, context_width,
-                            context_height, SDL_WINDOW_OPENGL);
+                            SDL_WINDOWPOS_UNDEFINED,
+                            0, 0,
+                            SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP);
   context = SDL_GL_CreateContext(window);
 
   if (!context) {
