@@ -1,0 +1,221 @@
+{
+    "date": "2022-12-18",
+    "time": "12:00",
+    "stadium": "Lusail Stadium",
+    "city": "Lusail",
+    "country": "Qatar",
+    "competition": "FIFA World Cup Final",
+    "weather": {
+        "temperature": "25°C",
+        "humidity": "60%",
+        "condition": "Clear"
+    },
+    "referee": {
+        "name": "Sandro Ricci",
+        "country": "Brazil",
+        "assistant_referees": [
+            "Marcelo Van Gasse (Brazil)",
+            "Anderson Daronco (Brazil)"
+        ],
+        "fourth_official": "Abdulrahman Al-Jassim (Qatar)",
+        "video_assistant_referee": "Massimiliano Irrati (Italy)"
+    },
+    "left_team": {
+        "name": "Argentina",
+        "short_name": "ARG",
+        "colors": "blue and white",
+        "formation": "4-3-3",
+        "coach": "Lionel Scaloni",
+        "captain": "Lionel Messi",
+        "nickname": "La Albiceleste",
+        "players": [
+            {
+                "first_name": "Emiliano",
+                "last_name": "Martinez",
+                "nickname": "Dibu",
+                "number": 23,
+                "short_position": "GK",
+                "position": "Goalkeeper"
+            },
+            {
+                "first_name": "Nicolas",
+                "last_name": "Tagliafico",
+                "nickname": "Nico",
+                "number": 3,
+                "short_position": "LB",
+                "position": "Left Back"
+            },
+            {
+                "first_name": "Cristian",
+                "last_name": "Romero",
+                "nickname": "Cuti",
+                "number": 13,
+                "short_position": "CB", 
+                "position": "Centre Back"
+            },
+            {
+                "first_name": "Nicolas",
+                "last_name": "Otamendi",
+                "nickname": "General",
+                "number": 19,
+                "short_position": "CB",
+                "position": "Centre Back"
+            },
+            {
+                "first_name": "Nahuel",
+                "last_name": "Molina",
+                "nickname": "Nahuel",
+                "number": 26,
+                "short_position": "RB",
+                "position": "Right Back"
+            },
+            {
+                "first_name": "Alexis",
+                "last_name": "Mac Allister",
+                "nickname": "Alexis",
+                "number": 20,
+                "short_position": "CM",
+                "position": "Central Midfielder"
+            },
+            {
+                "first_name": "Enzo",
+                "last_name": "Fernandez",
+                "nickname": "Enzo",
+                "number": 24,
+                "short_position": "CM",
+                "position": "Central Midfielder"
+            },
+            {
+                "first_name": "Rodrigo",
+                "last_name": "De Paul",
+                "nickname": "Rodri",
+                "number": 7,
+                "short_position": "CM",
+                "position": "Central Midfielder"
+            },
+            {
+                "first_name": "Angel",
+                "last_name": "Di Maria",
+                "nickname": "Fideo",
+                "number": 11,
+                "short_position": "LM",
+                "position": "Left Midfielder"
+            },
+            {
+                "first_name": "Julian",
+                "last_name": "Alvarez",
+                "nickname": "Araña",
+                "number": 9,
+                "short_position": "CF",
+                "position": "Centre Forward"
+            },
+            {
+                "first_name": "Lionel",
+                "last_name": "Messi",
+                "nickname": "La Pulga",
+                "number": 10,
+                "short_position": "RM",
+                "position": "Right Midfielder"
+            }
+        ]
+    },
+    "right_team": {
+        "name": "France",
+        "short_name": "FRA",
+        "colors": "blue, white and red",
+        "formation": "4-2-3-1",
+        "coach": "Didier Deschamps",
+        "captain": "Hugo Lloris",
+        "nickname": "Les Bleus",
+        "players": [
+            {
+                "first_name": "Hugo",
+                "last_name": "Lloris",
+                "nickname": "Hugo",
+                "number": 1,
+                "short_position": "GK",
+                "position": "Goalkeeper"
+            },
+            {
+                "first_name": "Theo",
+                "last_name": "Hernandez",
+                "nickname": "Theo",
+                "number": 22,
+                "short_position": "LB",
+                "position": "Left Back"
+            },
+            {
+                "first_name": "Raphael",
+                "last_name": "Varane",
+                "nickname": "Rapha",
+                "number": 4,
+                "short_position": "CB",
+                "position": "Centre Back"
+            },
+            {
+                "first_name": "Dayot",
+                "last_name": "Upamecano",
+                "nickname": "Upa",
+                "number": 18,
+                "short_position": "CB",
+                "position": "Centre Back"
+            },
+            {
+                "first_name": "Jules",
+                "last_name": "Kounde",
+                "nickname": "Jules",
+                "number": 5,
+                "short_position": "RB",
+                "position": "Right Back"
+            },
+            {
+                "first_name": "Aurelien",
+                "last_name": "Tchouameni",
+                "nickname": "Tchou",
+                "number": 8,
+                "short_position": "CM",
+                "position": "Central Midfielder"
+            },
+            {
+                "first_name": "Adrien",
+                "last_name": "Rabiot",
+                "nickname": "Adrien",
+                "number": 14,
+                "short_position": "CM",
+                "position": "Central Midfielder"
+            },
+            {
+                "first_name": "Antoine",
+                "last_name": "Griezmann",
+                "nickname": "Grizi",
+                "number": 7,
+                "short_position": "CM",
+                "position": "Central Midfielder"
+            },
+            {
+                "first_name": "Kylian",
+                "last_name": "Mbappe",
+                "nickname": "Kyky",
+                "number": 10,
+                "short_position": "LM",
+                "position": "Left Midfielder"
+            },
+            {
+                "first_name": "Olivier",
+                "last_name": "Giroud",
+                "nickname": "Oli",
+                "number": 9,
+                "short_position": "CF",
+                "position": "Centre Forward"
+            },
+            {
+                "first_name": "Ousmane",
+                "last_name": "Dembele",
+                "nickname": "Dembouz",
+                "number": 11,
+                "short_position": "RM",
+                "position": "Right Midfielder"
+            }
+        ]
+    }
+}
