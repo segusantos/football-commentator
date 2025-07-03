@@ -11,6 +11,8 @@ RUN apt-get update && apt-get --no-install-recommends install -yq git cmake buil
 RUN python3 -m pip install --upgrade pip "setuptools<58" wheel
 RUN python3 -m pip install psutil
 RUN python3 -m pip install six
+RUN python3 -m pip install grpcio grpcio-tools protobuf
+RUN python3 -m pip install python-dotenv requests
 
 WORKDIR /football
 COPY /football .

@@ -1,4 +1,3 @@
-from time import sleep
 from gfootball.env.config import Config
 from gfootball.env.football_action_set import action_set_v1 as default_action_set
 
@@ -12,17 +11,17 @@ def run_game(players: list) -> None:
         "action_set": "full",
         "players": players,
         "real_time": True,
+        "physics_steps_per_frame": 5,
     }))
+    event_extractor = EventExtractor()
     env.render()
     obs = env.reset()
-    event_extractor = EventExtractor()
     while True:
         obs, actions, done = env.step([])
         left_action = str(actions[0]) if actions[0] in default_action_set else "idle"
         right_action = str(actions[1]) if actions[1] in default_action_set else "idle"
         event_extractor.process_state(obs, left_action, right_action)
         if done:
-            sleep(10)
             return
 
 
