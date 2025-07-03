@@ -53,10 +53,15 @@ class EventExtractor:
 
         self.event_sender = EventSender()
 
-        self.publish_event({
-            "type": "inicio_del_partido",
-            "match_metadata": self.metadata
-        })
+        self.match_started = False
+    
+        if not self.match_started:
+            self.publish_event({
+                "type": "inicio_del_partido",
+                "match_metadata": self.metadata
+            })
+            self.match_started = True
+
 
     def set_match_time(self, steps_left: int) -> str:
         self.match_time = 90 * 60 * (self.total_steps - steps_left) / self.total_steps
