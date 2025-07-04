@@ -1,29 +1,29 @@
 {
     "date": "2022-12-18",
     "time": "12:00",
-    "stadium": "Lusail Stadium",
+    "stadium": "Estadio Lusail",
     "city": "Lusail",
-    "country": "Qatar",
-    "competition": "FIFA World Cup Final",
+    "country": "Catar",
+    "competition": "Final de la Copa Mundial de la FIFA",
     "weather": {
         "temperature": "25°C",
         "humidity": "60%",
-        "condition": "Clear"
+        "condition": "Despejado"
     },
     "referee": {
         "name": "Sandro Ricci",
-        "country": "Brazil",
+        "country": "Brasil",
         "assistant_referees": [
-            "Marcelo Van Gasse (Brazil)",
-            "Anderson Daronco (Brazil)"
+            "Marcelo Van Gasse (Brasil)",
+            "Anderson Daronco (Brasil)"
         ],
-        "fourth_official": "Abdulrahman Al-Jassim (Qatar)",
-        "video_assistant_referee": "Massimiliano Irrati (Italy)"
+        "fourth_official": "Abdulrahman Al-Jassim (Catar)",
+        "video_assistant_referee": "Massimiliano Irrati (Italia)"
     },
     "left_team": {
         "name": "Argentina",
         "short_name": "ARG",
-        "colors": "blue and white",
+        "colors": "azul y blanco",
         "formation": "4-3-3",
         "coach": "Lionel Scaloni",
         "captain": "Lionel Messi",
@@ -34,187 +34,187 @@
                 "last_name": "Martinez",
                 "nickname": "Dibu",
                 "number": 23,
-                "short_position": "GK",
-                "position": "Goalkeeper"
+                "short_position": "POR",
+                "position": "Portero"
             },
             {
-                "first_name": "Nicolas",
+                "first_name": "Nicolás",
                 "last_name": "Tagliafico",
-                "nickname": "Nico",
+                "nickname": "Tagliafico",
                 "number": 3,
-                "short_position": "LB",
-                "position": "Left Back"
+                "short_position": "LI",
+                "position": "Lateral Izquierdo"
             },
             {
                 "first_name": "Cristian",
                 "last_name": "Romero",
                 "nickname": "Cuti",
                 "number": 13,
-                "short_position": "CB", 
-                "position": "Centre Back"
+                "short_position": "DC", 
+                "position": "Defensa Central"
             },
             {
-                "first_name": "Nicolas",
+                "first_name": "Nicolás",
                 "last_name": "Otamendi",
-                "nickname": "General",
+                "nickname": "El General",
                 "number": 19,
-                "short_position": "CB",
-                "position": "Centre Back"
+                "short_position": "DC",
+                "position": "Defensa Central"
             },
             {
                 "first_name": "Nahuel",
                 "last_name": "Molina",
-                "nickname": "Nahuel",
+                "nickname": "El Galgo",
                 "number": 26,
-                "short_position": "RB",
-                "position": "Right Back"
+                "short_position": "LD",
+                "position": "Lateral Derecho"
             },
             {
                 "first_name": "Alexis",
-                "last_name": "Mac Allister",
-                "nickname": "Alexis",
+                "last_name": "Mac Állister",
+                "nickname": "El Colo",
                 "number": 20,
-                "short_position": "CM",
-                "position": "Central Midfielder"
+                "short_position": "MC",
+                "position": "Mediocampista Central"
             },
             {
                 "first_name": "Enzo",
                 "last_name": "Fernandez",
                 "nickname": "Enzo",
                 "number": 24,
-                "short_position": "CM",
-                "position": "Central Midfielder"
+                "short_position": "MC",
+                "position": "Mediocampista Central"
             },
             {
                 "first_name": "Rodrigo",
-                "last_name": "De Paul",
+                "last_name": "De Pol",
                 "nickname": "Motorcito",
                 "number": 7,
-                "short_position": "CM",
-                "position": "Central Midfielder"
+                "short_position": "MC",
+                "position": "Mediocampista Central"
             },
             {
-                "first_name": "Angel",
-                "last_name": "Di Maria",
+                "first_name": "Ángel",
+                "last_name": "Di María",
                 "nickname": "Fideo",
                 "number": 11,
-                "short_position": "LM",
-                "position": "Left Midfielder"
+                "short_position": "MI",
+                "position": "Mediocampista Izquierdo"
             },
             {
-                "first_name": "Julian",
-                "last_name": "Alvarez",
+                "first_name": "Julián",
+                "last_name": "Álvarez",
                 "nickname": "La Araña",
                 "number": 9,
-                "short_position": "CF",
-                "position": "Centre Forward"
+                "short_position": "DC",
+                "position": "Delantero Centro"
             },
             {
                 "first_name": "Lionel",
                 "last_name": "Messi",
                 "nickname": "La Pulga",
                 "number": 10,
-                "short_position": "RM",
-                "position": "Right Midfielder"
+                "short_position": "MD",
+                "position": "Mediocampista Derecho"
             }
         ]
     },
     "right_team": {
-        "name": "France",
+        "name": "Francia",
         "short_name": "FRA",
-        "colors": "blue, white and red",
+        "colors": "azul, blanco y rojo",
         "formation": "4-2-3-1",
         "coach": "Didier Deschamps",
         "captain": "Hugo Lloris",
-        "nickname": "Les Bleus",
+        "nickname": "Les Bleus (le blú)",
         "players": [
             {
                 "first_name": "Hugo",
-                "last_name": "Lloris",
-                "nickname": "Hugo",
+                "last_name": "Llorís",
+                "nickname": "Llorís",
                 "number": 1,
-                "short_position": "GK",
-                "position": "Goalkeeper"
+                "short_position": "POR",
+                "position": "Portero"
             },
             {
                 "first_name": "Theo",
-                "last_name": "Hernandez",
-                "nickname": "Theo",
+                "last_name": "Hernández",
+                "nickname": "Theo Hernández",
                 "number": 22,
-                "short_position": "LB",
-                "position": "Left Back"
+                "short_position": "LI",
+                "position": "Lateral Izquierdo"
             },
             {
-                "first_name": "Raphael",
-                "last_name": "Varane",
-                "nickname": "Rapha",
+                "first_name": "Rafael",
+                "last_name": "Varán",
+                "nickname": "Rafa Varán",
                 "number": 4,
-                "short_position": "CB",
-                "position": "Centre Back"
+                "short_position": "DC",
+                "position": "Defensa Central"
             },
             {
-                "first_name": "Dayot",
+                "first_name": "Daiot",
                 "last_name": "Upamecano",
-                "nickname": "Upa",
+                "nickname": "Upamecano",
                 "number": 18,
-                "short_position": "CB",
-                "position": "Centre Back"
+                "short_position": "DC",
+                "position": "Defensa Central"
             },
             {
-                "first_name": "Jules",
-                "last_name": "Kounde",
-                "nickname": "Jules",
+                "first_name": "Yuls",
+                "last_name": "Cundé",
+                "nickname": "Cundé",
                 "number": 5,
-                "short_position": "RB",
-                "position": "Right Back"
+                "short_position": "LD",
+                "position": "Lateral Derecho"
             },
             {
                 "first_name": "Aurelien",
-                "last_name": "Tchouameni",
-                "nickname": "Tchou",
+                "last_name": "Chuamení",
+                "nickname": "Chuamení",
                 "number": 8,
-                "short_position": "CM",
-                "position": "Central Midfielder"
+                "short_position": "MC",
+                "position": "Mediocampista Central"
             },
             {
                 "first_name": "Adrien",
                 "last_name": "Rabiot",
-                "nickname": "Adrien",
+                "nickname": "Rabiot",
                 "number": 14,
-                "short_position": "CM",
-                "position": "Central Midfielder"
+                "short_position": "MC",
+                "position": "Mediocampista Central"
             },
             {
-                "first_name": "Antoine",
-                "last_name": "Griezmann",
-                "nickname": "Grizi",
+                "first_name": "Antuán",
+                "last_name": "Grizman",
+                "nickname": "El Príncipe",
                 "number": 7,
-                "short_position": "CM",
-                "position": "Central Midfielder"
+                "short_position": "MC",
+                "position": "Mediocampista Central"
             },
             {
-                "first_name": "Kylian",
-                "last_name": "Mbappe",
-                "nickname": "La Tortuga Ninja",
+                "first_name": "Quilian",
+                "last_name": "Embapé",
+                "nickname": "Embapé",
                 "number": 10,
-                "short_position": "LM",
-                "position": "Left Midfielder"
+                "short_position": "MI",
+                "position": "Mediocampista Izquierdo"
             },
             {
                 "first_name": "Olivier",
-                "last_name": "Giroud",
-                "nickname": "Oli",
+                "last_name": "Yirud",
+                "nickname": "Yirud",
                 "number": 9,
-                "short_position": "CF",
-                "position": "Centre Forward"
+                "short_position": "DC",
+                "position": "Delantero Centro"
             },
             {
-                "first_name": "Ousmane",
-                "last_name": "Dembele",
-                "nickname": "Dembouz",
+                "first_name": "Usmán",
+                "last_name": "Dembelé",
+                "nickname": "Dembelé",
                 "number": 11,
-                "short_position": "RM",
-                "position": "Right Midfielder"
+                "short_position": "MD",
+                "position": "Mediocampista Derecho"
             }
         ]
     }

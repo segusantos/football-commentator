@@ -28,8 +28,6 @@ def buildDockerCommand(controllerPaths: list[str]) -> list[str]:
         "python3", "/gfootball/commentate_game.py",
         f"--player1={'gamepad:left_players=1' if len(controllerPaths) >= 1 else 'bot:left_players=1'}",
         f"--player2={'gamepad:right_players=1' if len(controllerPaths) == 2 else 'bot:right_players=1'}",
-        # f"--player1={'gamepad:left_players=1' if len(controllerPaths) >= 1 else 'ppo2_cnn:left_players=1,policy=gfootball_impala_cnn,checkpoint=/gfootball/trained_model_11_vs_11_easy_stochastic'}",
-        # f"--player2={'gamepad:right_players=1' if len(controllerPaths) == 2 else 'ppo2_cnn:right_players=1,policy=gfootball_impala_cnn,checkpoint=/gfootball/trained_model_11_vs_11_easy_stochastic'}",
     ])
     return cmd
 

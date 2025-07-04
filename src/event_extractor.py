@@ -1,6 +1,6 @@
 from enum import Enum
 import json
-from time import sleep
+from time import sleep, perf_counter
 import numpy as np
 
 
@@ -27,8 +27,8 @@ gameModeMap = {
     1: "saque_del_medio",
     2: "saque_de_arco",
     3: "tiro_libre",
-    4: "corner",
-    5: "lateral",
+    4: "córner",
+    5: "saque_lateral",
     6: "penal"
 }
 
@@ -50,6 +50,8 @@ class EventExtractor:
         self.prev_owned_state = None
         self.pass_state = None
         self.shot_state = None
+        self.last_possession_time = None
+        self.possession_timeout = 5.0
 
         self.event_sender = EventSender()
 
@@ -199,9 +201,8 @@ class EventExtractor:
                     self.publish_event(card_event)
         if self.prev_obs is not None and obs["game_mode"] not in [GameMode.NORMAL, GameMode.KICKOFF] and obs["game_mode"] != self.prev_obs["game_mode"]:
             game_mode_event = {
-                "type": "cambio_de_modo_de_juego",
-                "modo_anterior": gameModeMap[self.prev_obs["game_mode"]],
-                "modo_actual": gameModeMap[obs["game_mode"]],
+                "type": "pelota_parada",
+                "subtype": gameModeMap[obs["game_mode"]],
             }
             self.publish_event(game_mode_event)
 
@@ -236,17 +237,27 @@ class EventExtractor:
                 "pase_completado": self.pass_state["equipo"] == attacking_team["name"],
             })
             self.pass_state = None
-        elif self.prev_owned_state is not None and self.prev_owned_state["jugador"] != attacking_player:
-            self.publish_event({
-                "type": "cambio_de_posesion",
-                "subtype": "mismo_equipo" if self.prev_owned_state["equipo"] == attacking_team["name"] else "equipo_diferente",
-                "equipo_actual": attacking_team["name"],
-                "equipo_anterior": self.prev_owned_state["equipo"],
-                "jugador_actual": attacking_player,
-                "jugador_anterior": self.prev_owned_state["jugador"],
-                "ubicacion": attacking_player_location,
-            })
-        if self.shot_state is not None:
+        elif self.prev_owned_state is not None:
+            if self.prev_owned_state["jugador"] != attacking_player:
+                self.publish_event({
+                    "type": "quite_de_posesion",
+                    "subtype": "mismo_equipo" if self.prev_owned_state["equipo"] == attacking_team["name"] else "equipo_diferente",
+                    "equipo_actual": attacking_team["name"],
+                    "equipo_anterior": self.prev_owned_state["equipo"],
+                    "jugador_actual": attacking_player,
+                    "jugador_anterior": self.prev_owned_state["jugador"],
+                    "ubicacion": attacking_player_location,
+                })
+                self.last_possession_time = perf_counter()
+            elif self.last_possession_time is not None and perf_counter() - self.last_possession_time > self.possession_timeout:
+                self.publish_event({
+                    "type": "mantenimiento_de_posesion",
+                    "equipo": attacking_team["name"],
+                    "jugador": attacking_player,
+                    "ubicacion": attacking_player_location,
+                })
+                self.last_possession_time = perf_counter()
+        if self.shot_state is not None and self.shot_state["jugador"] != attacking_player:
             self.publish_event({
                 "type": "disparo",
                 "subtype": "atajado" if attacking_player["short_position"] == "GK" else "fallado",

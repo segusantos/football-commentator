@@ -1,3 +1,5 @@
+from time import sleep
+
 from gfootball.env.config import Config
 from gfootball.env.football_action_set import action_set_v1 as default_action_set
 
@@ -15,7 +17,7 @@ def run_game(players: list) -> None:
     }))
     event_extractor = EventExtractor()
     env.render()
-    obs = env.reset()
+    sleep(10)
     while True:
         obs, actions, done = env.step([])
         left_action = str(actions[0]) if actions[0] in default_action_set else "idle"
