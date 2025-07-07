@@ -1,136 +1,241 @@
-"""module_c.text_to_speech
+"""text_to_speech.text_to_speech
 ---------------------------------
-A Kokoro wrapper that **accepts a local model directory** (via the env‑var
-`KOKORO_REPO_DIR`) *or* falls back to HuggingFace (`hexgrad/Kokoro-82M`).
+An XTTS wrapper that **accepts a local model directory** (via env-vars
+`XTTS_MODEL_DIR` and `XTTS_TOKENIZER_PATH`) for fine-tuned models.
 
-* Works with Kokoro 0.7.x (iterator‑only API) and newer 0.9 wheels.
-* Streams every chunk; if we get only the short 6 k‑sample probe we re‑try
-  with forced newlines to coax a full sentence.
-* Saves 16‑bit PCM WAV.
+* Works with XTTS-v2 fine-tuned models
+* Implements text chunking for better processing
+* Saves 16-bit PCM WAV using the model's native sample rate
 """
 
 from io import BytesIO
 import logging
-import os
 from pathlib import Path
 from typing import List
+import re
 
 import numpy as np
 import soundfile as sf
 import torch
-from kokoro import KPipeline
-
-# Monkey patch torch.load to handle Kokoro's voice files
-# PyTorch 2.6+ defaults to weights_only=True which breaks Kokoro voice loading
-# Kokoro explicitly sets weights_only=True, so we need to override it
-_original_torch_load = torch.load
-def _patched_torch_load(*args, **kwargs):
-    # Force weights_only=False for Kokoro compatibility
-    kwargs['weights_only'] = False
-    return _original_torch_load(*args, **kwargs)
-
-torch.load = _patched_torch_load
+from TTS.tts.configs.xtts_config import XttsConfig
+from TTS.tts.models.xtts import Xtts
+from TTS.tts.layers.xtts.tokenizer import VoiceBpeTokenizer
+from huggingface_hub import hf_hub_download
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 # -----------------------------------------------------------------------------
-# Where to look for a local Kokoro repo, e.g. module_c/Kokoro-82M
-LOCAL_DIR = Path(os.getenv("KOKORO_REPO_DIR", Path(__file__).parent / "Kokoro-82M")).expanduser()
-VOICE_DEFAULT = "em_alex"
-SAMPLE_RATE = 24_000
-# Set KOKORO_FORCE_HUB=1 to bypass local files and always use HuggingFace hub
-FORCE_HUB = os.getenv("KOKORO_FORCE_HUB", "0").lower() in ("1", "true", "yes")
+# Environment variables for XTTS model paths
+XTTS_MODEL_DIR = Path("text_to_speech").expanduser()
+XTTS_TOKENIZER_PATH = Path("text_to_speech/vocab.json").expanduser()
+XTTS_SPEAKER_WAV = Path("text_to_speech/speaker_clone.wav").expanduser()
+
+MAX_CHUNK_LENGTH = 200  # characters
 # -----------------------------------------------------------------------------
 
 class TextToAudio:
-    """Turn Spanish commentary into 16‑bit PCM WAV bytes."""
+    """Turn Spanish commentary into 16-bit PCM WAV bytes using XTTS."""
 
-    def __init__(self, voice: str = VOICE_DEFAULT, sample_rate: int = SAMPLE_RATE):
+    def __init__(self, voice: str = None, sample_rate: int = None):
+        # voice parameter kept for interface compatibility but not used in XTTS
         self.voice = voice
-        self.sample_rate = sample_rate
+        self.sample_rate = sample_rate  # Will be overridden by model's native rate
+        
+        # Load XTTS model
+        self._load_model()
+        
+        # Update sample rate from model config
+        self.sample_rate = self.config.audio.output_sample_rate
+        logger.info("📦 XTTS model loaded with sample rate: %d Hz", self.sample_rate)
 
-        if LOCAL_DIR.is_dir():
-            # HuggingFace needs a *valid* repo_id string; we pass the default
-            # one but tell it to look in our local folder only.
-            repo_id = "hexgrad/Kokoro-82M"
-            cache_dir = str(LOCAL_DIR)
-                        # Kokoro 0.7.x' KPipeline doesn't accept cache_dir/local_files_only.
-            # Instead we trick HF into treating LOCAL_DIR as its cache by
-            # pointing HF_HOME there and forcing offline mode.
-            os.environ["HF_HOME"] = str(LOCAL_DIR)
-            os.environ["HF_HUB_OFFLINE"] = "1"
-            self.pipe = KPipeline(lang_code="e", repo_id="hexgrad/Kokoro-82M", device="cpu")
-            logger.info("📦 Loaded Kokoro from local dir %s", cache_dir)
-            # Use absolute path to voice file so load_voice skips HF download
-            voice_path = LOCAL_DIR / "voices" / f"{voice}.pt"
-            if voice_path.exists():
-                # Check if the voice file is valid by trying to peek at it
-                try:
-                    file_size = voice_path.stat().st_size
-                    logger.info("🔍 Found local voice file: %s (size: %d bytes)", voice_path, file_size)
-                    
-                    # Quick validation - try to read first few bytes
-                    with open(voice_path, 'rb') as f:
-                        header = f.read(8)
-                        if len(header) < 8:
-                            raise ValueError("Voice file too small")
-                    
-                    self.voice_file = str(voice_path)
-                    logger.info("✅ Using local voice file: %s", self.voice_file)
-                except Exception as e:
-                    logger.warning("⚠️  Local voice file corrupted (%s), falling back to hub", e)
-                    self.voice_file = voice  # fallback to hub
+    def _load_model(self):
+        """Load the XTTS model and configuration."""
+        config_path = XTTS_MODEL_DIR / "config.json"
+        
+        if not config_path.exists():
+            raise FileNotFoundError(f"XTTS config not found: {config_path}")
+        if not XTTS_TOKENIZER_PATH.exists():
+            raise FileNotFoundError(f"XTTS tokenizer not found: {XTTS_TOKENIZER_PATH}")
+        
+        # Load config
+        self.config = XttsConfig()
+        self.config.load_json(str(config_path))
+        
+        # Fix tokenizer path
+        self.config.model_args.tokenizer_file = str(XTTS_TOKENIZER_PATH.resolve())
+        
+        # Build model and load weights
+        self.model = Xtts.init_from_config(self.config)
+
+        # Check if model.pth exists, if not download from HuggingFace
+        model_path = XTTS_MODEL_DIR / "model.pth"
+        if not model_path.exists():
+            logger.info("📥 Model not found, downloading from HuggingFace...")
+            try:
+                
+                downloaded_path = hf_hub_download(
+                    repo_id="storres0514/XTTS-v2-football-commentator-ft",
+                    filename="model.pth",
+                    local_dir=str(XTTS_MODEL_DIR),
+                    local_dir_use_symlinks=False
+                )
+                logger.info("✅ Downloaded model to %s", downloaded_path)
+            except Exception as e:
+                raise RuntimeError(f"Failed to download model from HuggingFace: {e}")
+
+
+        self.model.load_checkpoint(self.config, checkpoint_dir=str(XTTS_MODEL_DIR), eval=True)
+        
+        # Reinitialize tokenizer after loading checkpoint
+        self.model.tokenizer = VoiceBpeTokenizer(self.config.model_args.tokenizer_file)
+        
+        # Send to GPU and eval mode
+        if torch.cuda.is_available():
+            self.model.cuda()
+        self.model.eval()
+        
+        logger.info("📦 Loaded XTTS from %s", XTTS_MODEL_DIR)
+        logger.info("🎤 Using speaker reference: %s", XTTS_SPEAKER_WAV)
+
+    def _chunk_text(self, text: str) -> List[str]:
+        """Split text into chunks suitable for XTTS processing."""
+        # Clean and normalize text
+        text = text.strip()
+        if not text:
+            return []
+        
+        # If text is short enough, return as single chunk
+        if len(text) <= MAX_CHUNK_LENGTH:
+            return [text]
+        
+        chunks = []
+        
+        # Split by sentences first (period, exclamation, question mark)
+        sentences = re.split(r'([.!?]+)', text)
+        
+        current_chunk = ""
+        for i in range(0, len(sentences), 2):  # Process sentence + punctuation pairs
+            sentence = sentences[i].strip()
+            punct = sentences[i + 1] if i + 1 < len(sentences) else ""
+            
+            if not sentence:
+                continue
+                
+            full_sentence = sentence + punct
+            
+            # If adding this sentence would exceed max length, save current chunk
+            if current_chunk and len(current_chunk) + len(full_sentence) > MAX_CHUNK_LENGTH:
+                chunks.append(current_chunk.strip())
+                current_chunk = full_sentence
             else:
-                logger.info("🌐 Local voice file not found, using hub")
-                self.voice_file = voice  # fallback to hub
-        else:
-            # No local copy – pull from hub
-            self.pipe = KPipeline(lang_code="e", repo_id="hexgrad/Kokoro-82M", device="cpu")
-            self.voice_file = voice
-            logger.info("🌐 Using Kokoro from HuggingFace hub")
+                current_chunk += (" " if current_chunk else "") + full_sentence
+        
+        # Add remaining chunk
+        if current_chunk.strip():
+            chunks.append(current_chunk.strip())
+        
+        # If we still have chunks that are too long, split them further
+        final_chunks = []
+        for chunk in chunks:
+            if len(chunk) <= MAX_CHUNK_LENGTH:
+                final_chunks.append(chunk)
+            else:
+                # Split by commas or spaces as last resort
+                words = chunk.split()
+                temp_chunk = ""
+                for word in words:
+                    if temp_chunk and len(temp_chunk) + len(word) + 1 > MAX_CHUNK_LENGTH:
+                        final_chunks.append(temp_chunk.strip())
+                        temp_chunk = word
+                    else:
+                        temp_chunk += (" " if temp_chunk else "") + word
+                if temp_chunk.strip():
+                    final_chunks.append(temp_chunk.strip())
+        
+        return final_chunks
 
-    # ------------------------------------------------------------------
     @staticmethod
-    def _to_np(chunk):
-        if isinstance(chunk, torch.Tensor):
-            return chunk.detach().cpu().numpy().astype(np.float32, copy=False)
-        if isinstance(chunk, np.ndarray):
-            return chunk.astype(np.float32, copy=False)
-        raise TypeError(type(chunk))
+    def _to_np(audio_tensor):
+        """Convert XTTS output to numpy array."""
+        if isinstance(audio_tensor, torch.Tensor):
+            return audio_tensor.squeeze().cpu().numpy().astype(np.float32, copy=False)
+        if isinstance(audio_tensor, np.ndarray):
+            return audio_tensor.astype(np.float32, copy=False)
+        raise TypeError(f"Unexpected audio type: {type(audio_tensor)}")
+
+    def _synthesize_chunk(self, text: str) -> np.ndarray:
+        """Synthesize a single text chunk using XTTS."""
+        try:
+            output = self.model.synthesize(
+                text,
+                self.config,
+                speaker_wav=XTTS_SPEAKER_WAV,
+                gpt_cond_len=3,
+                language="es",
+            )
+            
+            wav = output["wav"]
+            return self._to_np(wav)
+            
+        except Exception as e:
+            logger.error("❌ Error synthesizing chunk '%s': %s", text[:50], str(e))
+            # Return silence as fallback
+            return np.zeros(int(0.5 * self.sample_rate), dtype=np.float32)
 
     def _collect(self, text: str) -> np.ndarray:
-        chunks: List[np.ndarray] = []
-        for idx, (*_, ch) in enumerate(
-            self.pipe(text, voice=self.voice_file, speed=1.32, split_pattern="\n+")
-        ):
-            arr = self._to_np(ch)
-            chunks.append(arr)
-            logger.debug("    chunk %-2d shape=%s", idx, arr.shape)
-        return np.concatenate(chunks) if chunks else np.empty(0, np.float32)
+        """Process text in chunks and collect audio."""
+        chunks = self._chunk_text(text)
+        
+        if not chunks:
+            logger.warning("⚠️  No text chunks to process")
+            return np.empty(0, np.float32)
+        
+        audio_chunks: List[np.ndarray] = []
+        
+        for idx, chunk in enumerate(chunks):
+            logger.debug("    chunk %-2d: %s", idx, chunk[:50] + "..." if len(chunk) > 50 else chunk)
+            
+            audio = self._synthesize_chunk(chunk)
+            audio_chunks.append(audio)
+            
+            # Add small pause between chunks (100ms)
+            if idx < len(chunks) - 1:  # Don't add pause after last chunk
+                pause = np.zeros(int(0.1 * self.sample_rate), dtype=np.float32)
+                audio_chunks.append(pause)
+        
+        return np.concatenate(audio_chunks) if audio_chunks else np.empty(0, np.float32)
 
-    # ------------------------------------------------------------------
     def process(self, request) -> bytes:
+        """Process text request and return WAV bytes."""
         text = request.text if hasattr(request, "text") else str(request)
+        
+        # Clean text
+        text = text.strip()
+        if not text:
+            raise ValueError("Empty text provided")
+        
+        # Ensure text ends with punctuation for better synthesis
         if not text.endswith((".", "!", "?", "\n")):
-            text += "\n"
-
+            text += "."
+        
         logger.info("🗣️  Synthesising | %s…", text[:70])
+        
         audio = self._collect(text)
-
-        # Probe‑only heuristic: retry with forced newlines if too short
-        if audio.size and audio.shape[0] <= 7000:
-            logger.warning("↩️  Only probe chunk (%.0f ms). Retrying…",
+        
+        if audio.size == 0:
+            raise RuntimeError("XTTS produced no audio")
+        
+        # Check if audio is too short (likely a problem)
+        min_duration = 0.1  # 100ms minimum
+        if audio.shape[0] < min_duration * self.sample_rate:
+            logger.warning("⚠️  Very short audio output (%.0f ms). This might indicate a problem.",
                            1000 * audio.shape[0] / self.sample_rate)
-            text_retry = "\n".join(text[i:i+80] for i in range(0, len(text), 80)) + "\n"
-            audio = self._collect(text_retry)
-
-        if audio.size == 0 or audio.shape[0] <= 7000:
-            raise RuntimeError("Kokoro produced no usable audio")
-
+        
         duration = audio.shape[0] / self.sample_rate
-        logger.info("✅ Final audio %.2f s (%d bytes)", duration, audio.nbytes)
-
+        logger.info("✅ Final audio %.2f s (%d samples)", duration, audio.shape[0])
+        
+        # Convert to 16-bit PCM WAV
         buf = BytesIO()
         sf.write(buf, audio, self.sample_rate, format="WAV", subtype="PCM_16")
         return buf.getvalue()
