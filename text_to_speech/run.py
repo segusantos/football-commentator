@@ -10,9 +10,8 @@ import os
 os.environ["GRPC_VERBOSITY"] = "ERROR"
 import grpc
 from proto import data_pb2, data_pb2_grpc
-# from module_c.dummy_text_to_speech import TextToAudio
 from text_to_speech.text_to_speech import TextToAudio
-# from text_to_speech.text_to_speech_coqui import TextToAudio
+
 
 # Service configuration
 setup_logging()
