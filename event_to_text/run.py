@@ -3,7 +3,7 @@ from concurrent import futures
 import os
 os.environ["GRPC_VERBOSITY"] = "ERROR"
 import grpc
-from scripts.discovery_utils import (
+from utils.discovery_utils import (
     get_env_var, 
     get_service_endpoint_from_discovery, 
     start_grpc_server_with_discovery

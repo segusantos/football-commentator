@@ -5,7 +5,7 @@ Discovery Client SDK - Functions for service registration and discovery
 import requests
 import logging
 from typing import Optional, Dict
-from scripts.utils import get_env_var
+from utils.utils import get_env_var
 
 # Configure logging
 logger = logging.getLogger("Discovery Client")

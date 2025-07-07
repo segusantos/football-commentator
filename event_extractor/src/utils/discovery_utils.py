@@ -7,7 +7,7 @@ import signal
 from discovery.client import get_service_endpoint, DiscoveryError, register_service, unregister_service
 import logging
 import socket
-from scripts.utils import get_env_var
+from utils.utils import get_env_var
 import os
 import grpc
 

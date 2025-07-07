@@ -3,11 +3,11 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 os.environ["GRPC_VERBOSITY"] = "ERROR"
 import grpc
-from scripts.discovery_utils import (
+from utils.discovery_utils import (
     get_env_var,
     start_grpc_server_with_discovery
 )
-from scripts.logging_config import setup_logging
+from utils.logging_config import setup_logging
 from proto import data_pb2, data_pb2_grpc
 from audio_player.audio_player import OrderedAudioPlayer
 

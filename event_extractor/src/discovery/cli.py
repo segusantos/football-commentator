@@ -15,7 +15,7 @@ from discovery.client import (
     unregister_service,
     DiscoveryError
 )
-from scripts.utils import get_env_var
+from utils.utils import get_env_var
 
 def cmd_register(args):
     """Register a service"""

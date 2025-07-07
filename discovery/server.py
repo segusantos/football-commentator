@@ -10,8 +10,8 @@ import logging
 from typing import Dict, Optional
 import uvicorn
 import os
-from scripts.logging_config import setup_logging
-from scripts.utils import get_env_var
+from utils.logging_config import setup_logging
+from utils.utils import get_env_var
 
 # Configure logging
 setup_logging()

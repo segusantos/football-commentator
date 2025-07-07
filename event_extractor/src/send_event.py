@@ -2,7 +2,7 @@ import logging
 from functools import partial
 from typing import Dict, Optional
 import grpc
-from scripts.discovery_utils import get_env_var, get_service_endpoint_from_discovery
+from utils.discovery_utils import get_env_var, get_service_endpoint_from_discovery
 from proto import data_pb2, data_pb2_grpc
 
 logging.basicConfig(level=logging.INFO, format="[Module A] %(asctime)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S,%f"[:-3])
