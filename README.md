@@ -1,208 +1,82 @@
-# ⚽ AI Football Commentator
+# Football Commentator
 
-A distributed system for real-time football match commentary generation using natural language processing.
+Automatic football commentary generation using natural language processing.
 
-## Overview
+<div align="center">
+<img src="assets/logo.png" alt="Football Commentator" height="250"/>
+</div>
 
-This project is a **proof of concept** for generating live football commentary without human intervention. It leverages structured match data from a simulation environment, converts it into natural language using AI models, and synthesizes realistic voice narration, mimicking the tone and emotion of professional commentators.
+# Overview
 
-> ⚠️ Real video-based event detection is out of scope for this version. We use **Google Research Football** to simulate matches and extract precise event data.
+This repository contains the football-commentator project, which aims to generate real-time commentary for football matches using natural language processing techniques and distributed computing
 
+ This system was developed as the final project for the **I400 Natural Language Processing** course at [Universidad de San Andrés](https://www.udesa.edu.ar/), Argentina, during the first semester of 2025.
 
-(video o link a un video de demo)
+ Group members:
+- Marcos Piotto (mpiotto@udesa.edu.ar)
+- Segundo Santos Torrado (ssantostorrado@udesa.edu.ar)
+- Ignacio Schuemer (ischuemer@udesa.edu.ar)
+- Santiago Tomas Torres (storres@udesa.edu.ar)
 
-## 🛠️ Architecture
+# Architecture
 
-The system is modular and can be distributed across multiple machines:
+<div align="center">
+<img src="assets/football_commentator.png" alt="Event Extractor" height="250"/>
+</div>
 
-### 📍 1. Event Extractor
+The architecture of the football-commentator project is designed to handle real-time data processing and commentary generation on consumer-grade GPU hardware. It consists of the following three main components:
 
-* Simulates a football match using **Google Research Football**.
-* Extracts relevant events from the simulation raw data.
-* Emits structured events asynchronously via `gRPC`.
+- **Event Extractor:** it uses a modified version of the [Google Research Football](https://github.com/google-research/football) reinforcement learning environment to extract events from football matches. The purpose of this module is to capture key events such as passes, shots, and goals from the raw observations and actions data provided by the environment.
 
-### ✍️ 2. Event-to-Text Generator
+- **Event To Text:** this module converts the extracted events into natural language text. It uses either GPT-4.1 nano or a local Gemma 3 model fine-tuned on the former's outputs to generate coherent and contextually relevant commentary based on the events extracted by the Event Extractor.
 
-* Receives structured events and generates natural-language descriptions.
-* Used OpenAI's GPT-4o model to first generate a synthetic dataset of event-commentary pairs.
-* Then fine-tuned a small model to match the accuracy of the GPT-4o model and be able to run locally in real-time.
-* Mimics the narrative style of well-known Spanish football commentators.
+- **Text To Speech:** the final module converts the generated text commentary into speech. It uses a fine-tuned version of [Coqui TTS](https://github.com/coqui-ai/TTS) multi-speaker xTTSv2 model. The starting model was already a fine-tuned version of the xTTSv2 model on Argentinian Spanish data ([marianbasti/XTTS-v2-argentinian-spanish](https://huggingface.co/marianbasti/XTTS-v2-argentinian-spanish)), and it was further adapted using a small dataset of transcribed argentine football commentary. 
 
-### 🔊 3. Text-to-Speech (TTS)
+In order to allow the football-commentator app to run in real-time on consumer-grade hardware, the modules are designed to be executed on separate machines, each with its own GPU. Therefore, a hosted **Discovery** module is included to facilitate the identification between the different components of the system. Once the modules are running and connected with each other, they continue to communicate and exchange data through the LAN network by using the [gRPC](https://grpc.io/) protocol.
 
-* Converts text into expressive voice using [xTTS-v2 (Coqui TTS)](https://github.com/coqui-ai/TTS), fined-tuned on a dataset of short audio clips from Argentinian football commentators.
-* Outputs audio that matches the excitement and rhythm of live match broadcasts.
+Additionally, an **Audio Player** module is included to play the generated audio commentary. This module can be run on the same machine as the Event Extractor or on a separate machine, depending on the user's preference.
 
-## 🌐 Communication
+# Installation
 
-* Modules run independently and communicate over LAN using **gRPC**.
-* Low-latency performance: \~2 seconds from event trigger to audio playback.
+Each module of the football-commentator project is packaged as a separate Python package, with its own dependencies and requirements.
 
-
-
-
-
-## 🚀 Getting Started
-
-> Setup instructions coming soon.
-
-<!-- tendria que ser algo como usar un requirements.txt general y dps por modulo otro requirements.txt ? -->
-
-### Module A
-
-### Module B
-
-### Module C
-
-### Module D
-
-
-
-
-<!-- (esto esta viejo pero sirve de referencia) -->
-
-### Multi-Module gRPC Pipeline with Service Discovery (A → B → C → D)
-
-```
-Module A  →  Module B  →  Module C  →  Module D
-(events)     (text)        (audio)      (playback)
-```
-
-Each service is placed in its own folder (`module_a/ … module_d/`) and communicates with the next service using the messages and services defined in `proto/data.proto`.
-
-### 🆕 Service Discovery
-
-The system includes a **FastAPI-based service discovery service** that eliminates the need for manual endpoint configuration. Services can:
-- **Auto-register** themselves when they start
-- **Discover** other services dynamically  
-- Work across **different machines and networks**
-- **Pure discovery-based** communication (no manual configuration needed)
-- **Graceful shutdown** with automatic service unregistration
-- **Simplified networking** with explicit IP control via `SERVICE_HOST_IP`
-- **Clean logging** with module identification and verbosity control
-- **🔒 API Key Authentication** to prevent unauthorized access and spam
-
----
-## 1. Quick Start
-
-### Option A: With Service Discovery (Recommended)
-
-1.  Install dependencies (inside a fresh virtual-env):
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-2.  Start the **Discovery Service** (on the machine that will act as the registry):
-    ```bash
-    python -m discovery.server
-    ```
-    The discovery service will start on `http://0.0.0.0:8000`
-
-3.  Configure discovery (copy and modify env.example):
-    ```bash
-    cp .env.example .env
-    # Edit .env to set:
-    # - DISCOVERY_URL: where the discovery server is running
-    # - DISCOVERY_API_KEY: secure API key for authentication
-    ```
-
-4.  Start the services (all now use discovery):
-        
-    **Manual way (separate terminals):**
-    ```bash
-    # Terminal 1
-    python -m module_d.server
-    # Terminal 2  
-    python -m module_c.server
-    # Terminal 3
-    python -m module_b.server_with_discovery
-    ```
-
-5.  Trigger the pipeline:
-    ```bash
-    python -m module_a.dummy_play_game
-    ```
-
-### Option B: Without Discovery 
-
-In the env file set `MODULE_B_HOST`, `MODULE_C_HOST`, `MODULE_D_HOST` to the address of the machine you are running each service on.
-
-
-
-### 2. Service Discovery System
-
-#### How it Works
-
-The discovery service acts as an **online dictionary** where:
-- Services **register** themselves: `POST /register` with `{name, host, port, metadata}`
-- Services **discover** others: `GET /discover/{service_name}` returns `{host, port, endpoint, metadata}`
-
-### Discovery API Endpoints
-
-| Method | Endpoint | Description | Authentication |
-|--------|----------|-------------|----------------|
-| `GET` | `/` | Health check and registry status | ❌ Public |
-| `POST` | `/register` | Register a service | ✅ API Key Required |
-| `GET` | `/discover/{name}` | Discover a service by name | ✅ API Key Required |
-| `GET` | `/services` | List all registered services | ✅ API Key Required |
-| `DELETE` | `/unregister/{name}` | Unregister a service | ✅ API Key Required |
-
-### 🔒 Authentication
-
-The discovery server uses **Bearer token authentication** with API keys to prevent unauthorized access:
-
-- **Health check endpoint** (`/`) is public and requires no authentication
-- **All other endpoints** require a valid API key in the `Authorization` header
-- API keys are configured via the `DISCOVERY_API_KEY` environment variable
-- Include the API key as: `Authorization: Bearer your-api-key-here`
-
-
-### CLI Tool
-
-Test the discovery service using the built-in CLI:
+- **Discovery:** to install the Discovery module, run the following command:
 
 ```bash
-# Set your API key first (required for all operations)
-export DISCOVERY_API_KEY=your-secure-api-key
-
-# Register a service
-python -m discovery.cli register my_service 8080 --metadata '{"version": "1.0"}'
-
-# Discover a service  
-python -m discovery.cli discover my_service
-
-# List all services
-python -m discovery.cli list
-
-# Get just the endpoint
-python -m discovery.cli endpoint my_service
-
-# Unregister a service
-python -m discovery.cli unregister my_service
-
-# Use remote discovery server
-python -m discovery.cli --discovery-url http://192.168.1.100:8000 list
+pip install football-commentator-discovery
 ```
 
-### Environment Variables
+- **Event Extractor:** to install the Event Extractor module, run the following command:
 
-**Discovery Configuration:**
 ```bash
-DISCOVERY_HOST=localhost        # Discovery server location  
-DISCOVERY_API_KEY=your-api-key  # API key for discovery server authentication
-SERVICE_HOST_IP=192.168.1.100   # Override auto-detected IP (optional)
+pip install football-commentator-event-extractor
 ```
 
-**Service Binding (optional):**
+- **Event To Text:** to install the Event To Text module, run the following command:
+
 ```bash
-MODULE_B_HOST=0.0.0.0:50052     # Bind address for Module B
-MODULE_C_HOST=0.0.0.0:50053     # Bind address for Module C
-MODULE_D_HOST=0.0.0.0:50054     # Bind address for Module D
+pip install football-commentator-event-to-text
 ```
 
-**Logging Configuration:**
+- **Text To Speech:** to install the Text To Speech module, run the following command:
+
 ```bash
-VERBOSE=true                    # Enable detailed debug logs (default: false)
+pip install football-commentator-text-to-speech
+```
+- **Audio Player:** to install the Audio Player module, run the following command:
+
+```bash
+pip install football-commentator-audio-player
 ```
 
-During local development you can place these keys in a `.env` file (they are loaded on every access via `scripts.utils.get_env_var`).
+# Usage
+
+Once the modules are installed, you can run them individually and in order, starting with the Discovery module and ending with the Audio Player module. Each module will automatically discover the other modules in the network and establish communication with them using gRPC. Remember to wait for each module to be fully initialized and listening for connections before starting the next one.
+
+```bash
+python -m discovery.run
+python -m audio_player.run
+python -m text_to_speech.run
+python -m event_to_text.run
+python -m event_extractor.run
+```
