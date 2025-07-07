@@ -8,9 +8,9 @@ Automatic football commentary generation using natural language processing.
 
 # Overview
 
-This repository contains the football-commentator project, which aims to generate real-time commentary for football matches using natural language processing techniques and distributed computing
+This repository contains the football-commentator project, which aims to generate real-time commentary for football matches using natural language processing techniques and distributed computing.
 
- This system was developed as the final project for the **I400 Natural Language Processing** course at [Universidad de San Andrés](https://www.udesa.edu.ar/), Argentina, during the first semester of 2025.
+This system was developed as the final project for the **I400 Natural Language Processing** course at [Universidad de San Andrés](https://www.udesa.edu.ar/), Argentina, during the first semester of 2025.
 
  Group members:
 - Marcos Piotto (mpiotto@udesa.edu.ar)
@@ -21,7 +21,7 @@ This repository contains the football-commentator project, which aims to generat
 # Architecture
 
 <div align="center">
-<img src="assets/football_commentator.png" alt="Event Extractor" height="250"/>
+<img src="assets/football_commentator.png" alt="Event Extractor" height="400"/>
 </div>
 
 The architecture of the football-commentator project is designed to handle real-time data processing and commentary generation on consumer-grade GPU hardware. It consists of the following three main components:
