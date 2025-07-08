@@ -86,9 +86,8 @@ The architecture is designed to handle real-time data processing and commentary 
 ### Prerequisites
 
 - Python 3.11.13
-- CUDA-compatible GPU (recommended)
+- CUDA-compatible GPU
 - Docker (for the event extractor module)
-- 16GB+ RAM recommended
 
 ### Quick Start
 
