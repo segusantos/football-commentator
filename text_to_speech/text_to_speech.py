@@ -27,8 +27,8 @@ logger.setLevel(logging.DEBUG)
 
 # -----------------------------------------------------------------------------
 # Environment variables for XTTS model paths
-XTTS_MODEL_DIR = Path("text_to_speech").expanduser()
-XTTS_TOKENIZER_PATH = Path("text_to_speech/vocab.json").expanduser()
+XTTS_MODEL_DIR = Path("text_to_speech/model").expanduser()
+XTTS_TOKENIZER_PATH = Path("text_to_speech/model/vocab.json").expanduser()
 XTTS_SPEAKER_WAV = Path("text_to_speech/speaker_clone.wav").expanduser()
 
 MAX_CHUNK_LENGTH = 200  # characters
