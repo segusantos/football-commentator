@@ -9,7 +9,7 @@ from utils.discovery_utils import (
 )
 from utils.logging_config import setup_logging
 from proto import data_pb2, data_pb2_grpc
-from audio_player.audio_player2 import OrderedAudioPlayer
+from audio_player.audio_player import OrderedAudioPlayer
 
 # Service configuration
 setup_logging()

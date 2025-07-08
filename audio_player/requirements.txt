@@ -1,0 +1,14 @@
+beautifulsoup4==4.13.4
+certifi==2025.6.15
+charset-normalizer==3.4.2
+dotenv==0.9.9
+grpcio==1.73.1
+idna==3.10
+protobuf==6.31.1
+python-dotenv==1.1.1
+requests==2.32.4
+setuptools==78.1.1
+soupsieve==2.7
+typing_extensions==4.14.1
+urllib3==2.5.0
+wheel==0.45.1

@@ -19,7 +19,8 @@ def buildDockerCommand(controllerPaths: list[str]) -> list[str]:
         "-e", "PULSE_SERVER=unix:/tmp/pulse/native",
         "-v", f"/run/user/{os.getuid()}/pulse:/tmp/pulse:ro",
         "-v", f"{os.path.expanduser('~')}/.config/pulse/cookie:/root/.config/pulse/cookie:ro",
-        "-v", "./event_extractor/src:/gfootball"
+        "-v", "./event_extractor/src:/gfootball",
+        "-v", ".env:/gfootball/.env:ro",
     ]
     for path in controllerPaths:
         cmd.extend(["--device", path])

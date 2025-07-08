@@ -1,8 +1,3 @@
-"""
-Discovery Server MVP - FastAPI-based service registry
-Acts as an online dictionary where modules can register and discover each other
-"""
-
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -161,7 +156,7 @@ def unregister_service(service_name: str, _: bool = Depends(verify_api_key)):
 def main():
     """Run the discovery server"""
     uvicorn.run(
-        "discovery.server:app",
+        "discovery.run:app",
         host="0.0.0.0",
         port=8000,
         reload=True,

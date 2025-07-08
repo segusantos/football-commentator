@@ -1,2 +1,4 @@
 __pycache__/
 .env
+debug_llm_calls/
+text_to_speech/model/

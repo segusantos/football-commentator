@@ -161,7 +161,7 @@ def unregister_service(service_name: str, _: bool = Depends(verify_api_key)):
 def main():
     """Run the discovery server"""
     uvicorn.run(
-        "discovery.server:app",
+        "discovery.run:app",
         host="0.0.0.0",
         port=8000,
         reload=True,
